@@ -1,0 +1,93 @@
+\section{Programmazione generica}
+Si intende la possibilita’ data da un linguaggio di
+rappresentare tipi e implementare algoritmi che
+abbiano un tipo come parametro.
+Il tipo parametrico viene poi specificato:
+\begin{itemize}
+    \item Tempo di compilazione (es. templates in C++)
+    \item Tempo di esecuzione (es generics in Java)
+\end{itemize}
+
+Lo scopo è implementare algoritmi che siano
+indipendenti dal tipo su cui operano.Idealmente al massimo livello di astrazione possibile.
+
+\begin{lstlisting}[language=c++]
+#include<string>
+#include<utility>
+#include<iostream>
+using namespace std;
+
+template <class T>
+void my_swap(T& f, T& s) {
+    T tmp = f;
+    f = s;
+    s = tmp;
+}
+int main(){
+    int a = 3; int b = 4;
+    my_swap<int> (a,b);     //a=4   b=3
+    string s1 = "hello";
+    string s2 = "world";
+    my_swap<string> (s1,s2);  //s1=world   s2=hello
+return 0;
+}
+\end{lstlisting}
+
+\subsection{Utilizzo metodo clone:}
+\begin{lstlisting}[language=c++]
+class A{
+    public:
+    virtual A& operator=(const A& _a)=0;
+    virtual A* clone()const=0;
+    virtual ~A(){};
+};
+----
+#include "A.h"
+class B:public A{
+    int i;
+    public:
+    B(int _i){i=_i;};
+    B& operator=(const A& _b);
+    B& operator=(const B& _b);
+    B* clone()const;
+    friend ostream& operator<<(ostream& os,const B& _b);
+};
+ostream& operator<<(ostream& os,const B& _b); 
+----
+#include "B.h"
+B& B::operator=(const A& _b){
+    A* temp=_b.clone();
+    B b(*((B*)temp));
+    *this=b;
+    return *this;
+}
+B& B::operator=(const B& _b){
+    i=_b.i;
+    return *this;
+}
+B* B::clone()const{ return new B(*this);};
+ostream& operator<<(ostream& os,const B& _b){return os<<_b.i;}
+
+----
+
+#include<string>
+#include<utility>
+#include<iostream>
+using namespace std;
+#include "B.h"
+
+void my_swap (A &f, A &s ) {
+    A* temp=f.clone();
+    f=s;
+    s=*temp;
+    delete temp;
+}
+int main() {
+    B x(33);
+    B y(44);
+    cout << x << y << endl;
+    my_swap(x,y);
+    cout << x << y << endl;
+    return 0;
+}
+\end{lstlisting}

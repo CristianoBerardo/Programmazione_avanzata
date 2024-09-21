@@ -1,0 +1,113 @@
+\section{Smart pointers}
+Puntatori intelligenti che provvedono in automatico alla cancellazione della memoria. Non fanno parte delle caratteristiche basi del C++ e proprio per questo vengono forniti attraverso le librerie tra cui quella standard: \verb|#include <iostream>|.
+
+Dopo essere stato inizializzato, il puntatore intelligente detiene la proprietà del puntatore non elaborato. Ciò significa che il puntatore intelligente è responsabile dell'eliminazione della memoria specificata dal puntatore non elaborato. Il distruttore del puntatore intelligente contiene la chiamata per l'eliminazione e poiché il puntatore intelligente viene dichiarato nello stack, il relativo distruttore viene richiamato quando il puntatore intelligente esce dall'ambito, anche se viene generata un'eccezione in un punto precedente dello stack.
+
+Accedere al puntatore incapsulato utilizzando gli operatori del puntatore noti, \verb|->| e \verb|*|, di cui verrà eseguito l'overload per restituire il puntatore non elaborato incapsulato.
+
+\paragraph{}
+Nel linguaggio C++ moderno, i puntatori non elaborati vengono utilizzati esclusivamente in blocchi di codice piccoli con ambito limitato, nei cicli o nelle funzioni di supporto per le quali le prestazioni sono importanti e non può crearsi confusione circa la proprietà.
+
+La differenza, rispetto ad altri linguaggi, consiste nel fatto che nessun Garbage Collector separato viene eseguito in background. La memoria viene gestita tramite le regole di ambito C++ standard in modo che l'ambiente di runtime risulti più veloce e più efficiente.
+\paragraph{}
+IMPORTANTE: Creare sempre puntatori intelligenti su una riga di codice separata e mai in un elenco di parametri, in modo da evitare anche le più piccole perdite di risorse dovute a alcune regole di allocazione dell'elenco di parametri.
+
+
+
+
+
+
+\begin{lstlisting}[language=C++]
+#include <iostream>
+#include <memory> 
+
+void UseRawPointer(){
+    // Using a raw pointer -- not recommended.
+    Song* pSong = new Song(L"Nothing on You", L"Bruno Mars"); 
+
+    // Use pSong...
+
+    // Don't forget to delete!
+    delete pSong;   
+}
+
+void UseSmartPointer(){
+    // Declare a smart pointer on stack and pass it the raw pointer.
+    unique_ptr<Song> song2(new Song(L"Nothing on You", L"Bruno Mars"));
+    
+    unique_ptr<int> p;
+    p.reset(new int(54));
+    
+    // Use song2...
+    wstring s = song2->duration_;
+    //...
+
+} // song2 is deleted automatically here.
+
+\end{lstlisting}
+
+
+\subsection{\text{unique\_ptr}}
+Classe template che permette di gestire una risorsa nella memoria dinamica garantendone l'ownership.
+Può essere spostato a un nuovo proprietario, ma non copiato o condiviso. Sostituisce \verb|auto_ptr|, che è deprecato. 
+
+\subsection{\text{shared\_ptr}}
+Puntatore intelligente con conteggio dei riferimenti, per accedere al conteggio viene fornito il metodo \verb|use_count()|. Possiede più ownership, utilizzato ad esempio quando si restituisce una copia di un puntatore da un contenitore, ma si desidera conservare l'originale.
+
+Il puntatore non elaborato non viene eliminato finché tutti i proprietari di \verb|shared_ptr| non sono usciti dall'ambito o non hanno ceduto in altro modo la proprietà.
+
+\begin{lstlisting}[language=C++]
+class A{
+    shared_ptr<int> p;
+    int owner(){
+        return p.use_count();
+    }
+}; 
+\end{lstlisting}
+
+\subsection{\text{weak\_ptr}}
+Puntatore intelligente per casi speciali da utilizzare insieme a \verb|shared_ptr|.
+\verb|weak_ptr| fornisce l'accesso a un oggetto di proprietà di una o più istanze di \verb|shared_ptr|, ma non partecipa al conteggio dei riferimenti. Utilizzarlo quando si desidera osservare un oggetto, ma non è necessario che rimanga attivo.
+
+Per accedere al contenuto e’ necessario copiarlo in
+uno \verb|shared_ptr| usando un metodo lock().
+
+\begin{lstlisting}[language=C++]
+class A{
+    weak_ptr<int> wp; 
+    
+    int get_wp(){
+        shared_ptr<int> sp=wp.lock();
+        return *sp;
+    }
+}; 
+\end{lstlisting}
+
+
+\subsection{Metodi utili}
+
+\begin{lstlisting}[language=C++]
+#include <iostream>
+#include <memory> 
+using namespace std;
+
+class A{
+    unique_ptr<int> wp; 
+    unique_ptr<Data> wp_data; 
+    
+    p.reset(new int(54)); 
+    cout << *p;
+
+    p.reset()   // Free the memory before we exit function block.
+    
+    ---
+    
+    wp_data -> doSomething();   //Call a method on the object
+    Data* data = wp_data.get();   //Pass raw pointer get()
+
+    ---
+
+    shared_ptr<int> p;
+    int numer_owners =  p.use_count();
+}; 
+\end{lstlisting}

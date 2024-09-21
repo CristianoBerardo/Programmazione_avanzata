@@ -1,0 +1,245 @@
+\section{Puntatori e Funzioni}
+Variabili che contengono indirizzi a funzioni. Questi servono quando il programma deve scegliere quale funzione chiamare fra diverse possibili, e la scelta non è definita a priori ma dipende dai dati del programma stesso.
+
+Questo processo si chiama late binding: gli indirizzi delle funzioni da chiamare non vengono risolti al momento della compilazione, come avviene normalmente (early binding) ma al momento dell'esecuzione.
+
+\begin{lstlisting}[language=c++]
+    int a(double,int){...}
+    int b(double,int){...}
+    int f(int i,int j){return i*j;}
+    int f2(int i, int j){return i+j;}
+    double media_generale(int i, int j,int(*pf)(int,int) ){ 
+        return double(pf(i,j))/2; 
+    }
+    main(){
+        int (*pf)(int,int);
+        int (*pfunz)(double, int);        
+        ...
+        if(i%2==0){
+            pfunz=a;
+        }else
+            pfunz=b; 
+        }   
+        cout<<pfunz(2.0,3); //or cout<<(*pfunz)(2.0,3);
+
+        pf=f;
+        cout<<pf(2,3)<<endl; // or (*pf)(2,3);  //6
+        cout<<media_generale(2,3,f)<<endl;      //3
+        cout<<media_generale(2,3,f2)<<endl;     //2.5
+    }
+\end{lstlisting}
+
+\section{Eccezioni}
+Gli errori di runtime sono quegli errori che NON possono essere
+rilevati in fase di compilazione, perché si manifestano solo durante
+la fase di esecuzione del programma e solo in alcune particolari
+circostanze, ossia ai veri casi di “eventi eccezionali”.
+\paragraph{}
+Alcuni esempi:
+
+\begin{itemize}
+    \item[--] divisione per 0;
+    \item[--] pathname non valido o che fa riferimento ad una periferica che in un certo momento risulta scollegata;
+    \item[--] overflow su un tipo di dato
+    \item[--] operazione di casting non valido
+\end{itemize}
+
+Si tratta di errori pericolosi perché se non gestiti, possono generare
+anomalie di funzionamento che possono determinare persino il
+blocco inaspettato del programma.
+
+Un’eccezione non necessariamente deve essere gestita all’interno
+della stessa funzione in cui viene sollevata. Questo è reso possibile dal meccanismo proprio delle eccezioni, il
+quale prevede che un’eccezione sollevata in una funzione e che non
+venga in essa gestita, sia propagata all’indietro verso il chiamante,
+si dice risalendo lo stack delle chiamate.
+
+
+\subsection{throw}
+Per gestire questi errori i linguaggi OOP implementano il meccanismo delle eccezioni, il quale consente di sollevare, \verb|throw|, un'eccezione quando si verifica un errore a runtime. Questo meccanismo si traduce nella creazione di un oggetto appartiene ad una classe particolare, dipendente dallo
+specifico errore di runtime che si è verificato.
+
+\subsection{try-cath}
+Per "intercettare" l'errore in C++ viene fornito il costrutto \verb|try-cath| il quale permette di sospendere il programma nel punto dove si è verificato l'errore per saltare al pezzo di codice che gestisce l'errore.
+
+\begin{lstlisting}[language=c++]
+try{
+    int x, y;
+    //insert from keyboard
+    if(y == 0) throw "Division by zero!";   //or division(x,y);
+}catch(const char* msg){
+    cerr<<msg<< endl;
+}catch(){ }
+...
+\end{lstlisting}
+
+\verb|try|:  blocco in cui si possono inserire le istruzioni che si vuole tenere “sotto controllo” perché durante l’esecuzione potrebbero generare degli errori a runtime.
+
+\verb|catch|: blocco in grado di riconoscere e “catturare” un certo tipo di eccezione e che contiene le istruzioni per gestire l’errore di runtime che l’ha generata.
+\paragraph{}
+Quando nel blocco \verb|try| si genera un'eccezione si salta ai sui blocchi catch associati, partendo dal primo a scendere (dall'eccezione più specifica a quella più generale). Alla sua uscita il flusso del programma prosegue oltre l’ultimo blocco catch.
+
+
+\subsection{stdexcept}
+Questo header definisce un insieme di eccezioni standard che sia la libreria che i programmi possono utilizzare per segnalare errori comuni.
+Includere nell'intestazione:\verb|#include <stdexcept>|.
+
+\begin{itemize}
+    \item Logic errors 
+        \begin{itemize}
+            \item \verb|logic_error|
+            \item \verb|domain_error|
+            \item \verb|invalid_argument|
+            \item \verb|length_error|
+            \item \verb|out_of_range|            
+        \end{itemize}
+
+    \item Runtime errors
+        \begin{itemize}
+            \item \verb|runtime_error|
+            \item \verb|range_error|
+            \item \verb|overflow_error|
+            \item \verb|underflow_error|            
+        \end{itemize}
+\end{itemize}
+
+
+\begin{lstlisting}[language=c++]
+#include <stdexcept>
+using namespace std;
+
+int divideINT(int a, int b) {
+    if (a < 0 || b < 0) {
+        throw invalid_argument( "received negative value" );
+    }
+    return a/b;
+}
+void test(){
+    int x=1, y=0; 
+    try {
+        cout << a << "/" << b << "=" << divideINT(a, b) << endl;
+    } catch( const invalid_argument& e ) {
+        cout << e.what(); << endl //or cout << "a or b negative" << endl;    //cout << e << endl; //bind ERROR    
+    } cathc(...){   //otherwise
+        cout << "other wrong error";
+    }
+}
+int main(){ test(); }
+\end{lstlisting}
+
+\section{Multithreading in C++}
+Dal C++ 11 si ha la casse \verb|thread|, la quale abilita alla scrittura di programmi che possono eseguire parti del codice in parallelo e non più in maniera sequenziale.
+
+La classe \verb|thread| ha le seguenti funzioni:
+\begin{itemize}
+    \item detach
+    \item get\_id
+    \item join
+    \item joinable
+    \item join
+    \item joinable
+    \item native\_handle
+    \item operator= (move semantics)
+    \item hardware\_concurrency()
+\end{itemize}
+
+
+\begin{lstlisting}[language=c++]
+#include <iostream>
+#include <thread> 
+using namespace std;
+
+int a(){  /*do something...*/ }
+int b(int count){ /*do something...*/ }
+
+int main(){
+    unsigned int c = thread::hardware_concurrency();
+    thread t1 (a);
+    thread t2;
+    t2 = thread(b,0);
+
+    t1.join();
+    t2.join();
+}
+   
+\end{lstlisting}
+
+\subsection{Data race}
+Si verifica quando due o più threads in un singolo processo accedono simultaneamente alla stessa area di memoria, almeno un accesso è eseguito in scrittura e non vi sono blocchi per l'accesso esclusivo. Questo significa che il valore da un momeno all'altro può essere cambiato ed alterare il funzionamento del programma.
+
+Proprio per questo motivo in C++ vengono introdotti due blocchi: \verb|atomic| e \verb|mutex|.
+
+\begin{itemize}
+    \item \verb|atomic| rende atomiche le operazioni su una certa variabile;
+    \item \verb|mutex| Definisco delle sezioni critiche come mutuamente esclusive nel codice;
+\end{itemize}
+
+\begin{lstlisting}[language=c++]
+//first resolution with atomic 
+#include <iostream>   
+#include <thread>
+#include <atomic>
+using namespace std;
+
+static std::atomic<int> count(0);
+//static int count=0;
+void inc_thread(){
+    for(int i=0;i<10000;i++) count++;
+}
+void dec_thread(){
+for (int i=0;i<10000;i++) count--;
+}
+main(){
+    std::thread inc(inc_thread);
+    std::thread dec(dec_thread);
+    inc.join();
+    dec.join();
+    std::cout<<"counter"<<count;
+    return 0;
+} 
+\end{lstlisting}
+
+\begin{lstlisting}[language=c++]
+//second resolution with mutex 
+#include <iostream> 
+#include <thread>
+#include <mutex>
+using namespace std;
+
+mutex myMutex;
+static int condivisa=0;
+void inc_thread(){
+    for(int i=0;i<10000;i++){
+    myMutex.lock(); condivisa++; myMutex.unlock();}
+}
+void dec_thread(){
+    for (int i=0;i<10000;i++){
+    myMutex.lock(); condivisa--; myMutex.unlock();}
+}
+int main (){
+    std::thread inc(inc_thread);
+    std::thread dec(dec_thread);
+    inc.join();
+    dec.join();
+}
+\end{lstlisting}
+
+
+\subsection{Problemi della concorrenza: deadlock e starvation}
+
+\paragraph{Deadlock}
+Situazioni in cui uno o piu’ processi/thread si bloccano:
+\begin{itemize}
+    \item Omettere l’unlock un mutex
+    \item Terminazione inattesa di una funzione (lancio di eccezioni), soluzione: \verb|lock_guard<mutex>|
+    \item Funzioni annidate che chiamano lo stesso mutex, soluzione: \verb|recursive_mutex|
+    \item Ordine di locking di diversi mutex , soluzione: \verb|ock(mutex, mutex)|
+\end{itemize}
+
+\paragraph{Starvation} 
+La politica di accesso impedisce ad un processo di accedere alla risorsa
+
+\paragraph{}
+Esistono nella letteratura altre primitive usando per
+gestire la concorrenza come semafori e monitor ma non sono forniti dallo standard di C++ che
+preferisce fornire primitive di livello più basso.

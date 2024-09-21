@@ -1,0 +1,47 @@
+\section{Ereditarieta’}
+In C++ vi sono tre tipi di ereditarieta’:
+
+\begin{itemize}
+    \item public
+    \item private
+    \item protected
+\end{itemize}
+Queste sono anche le stesse keywords della visibilita’ nella classe.
+
+\begin{table}[ht]
+\caption{Ereditarietà}
+\begin{center}
+\begin{tabular}{c|c|c}
+    Tipo di Ereditarietà &Casse base& Casse derivata\\
+    \hline
+    \multirow{3}{*}{Public}     &Public&Public\\
+                                &Protected&Protected\\
+                                &Private&Inacc.\\
+    \hline
+
+    \multirow{3}{*}{Protected}     &Public&Protected\\
+                                &Protected&Protected\\
+                                &Private&Inacc.\\
+    \hline
+    \multirow{3}{*}{Private}     &Public&Private\\
+                                &Protected&Private\\
+                                &Private&Inacc.\\
+    \hline
+\end{tabular}
+\end{center}
+\label{tab:multicol}
+\end{table}
+
+\subsection{Keyword virtual}
+I metodi possono essere definiti virtual, in questo modo C++ riesce a dichiara il late binding (risolto run-time) rispetto al early binding (risolto a compilation-time).
+\paragraph{}
+Una classe è detta \verb|Puramente virtuale| se ha almeno un metodo virtual, ovvero la sua dichiarazione nella classe è seguita da "=0":
+
+\begin{lstlisting}[language=c++]
+class A{ 
+    virtual int metodo()=0;
+    ...
+};
+\end{lstlisting}
+
+Una classe puramente virtuale NON si può istanziare.

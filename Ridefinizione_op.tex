@@ -1,0 +1,89 @@
+\section{Ridefinizione degli operatori}
+Il linguaggio C++ supporta la ridefinizione degli operatori. Gli operatori sono le operazioni che appaiono nelle espressioni.
+
+Supponiamo di avere A a1,a2, a3, a4; nell’espressione
+a1=(a2+a3)*(++a4); compaiono quattro operatori operator=,
+operator+, operator* e operator++.
+operator++ ha un solo operando mentre operator=, operator+,
+operator* ne hanno due. 
+
+\paragraph{}
+Gran parte degli operatori si possono ridefinire o come metodi
+della classe o come funzioni esterne, ma NON le due cose
+assieme.
+Quando si ridefiniscono come metodi il primo operando
+corrisponde all’istanza chiamante e gli altri (se ve ne sono) a
+parametri del metodo.
+Quando si ridefiniscono come funzioni esterne alla classe TUTTI
+gli operandi corrispondono a parametri della funzione. 
+\paragraph{}
+operator= si puo’ ridefinire SOLO come metodo ovvero
+
+\begin{lstlisting}[language=c++]
+    A& A::operator=(const A&)
+\end{lstlisting}
+
+
+\subsection{Ridefinizione operator<<}
+
+\begin{lstlisting}[language=c++]
+    class A{
+        ...
+
+        friend ostream& operator<<(ostream &os, const A& _a);
+    }
+    ostream& operator<<(ostream &os, const A& _a);
+\end{lstlisting}
+
+\subsection{Ridefinizione operator+}
+\begin{lstlisting}[language=c++]
+    class A{
+        ...
+        A operator+(const A&); 
+
+        //modo da preferire
+        friend A operator+(const A&,const A&);
+    }
+    A operator+(const A& _x, const A& _y);
+\end{lstlisting}
+\subsection{Ridefinizione operator-}
+
+\begin{lstlisting}[language=c++]
+    class A{
+        ...
+        friend A operator-(const A& _c1, const A& _c2); 
+    }
+    A operator-(const A& _c1, const A& _c2); 
+\end{lstlisting}
+\subsection{Ridefinizione operator*}
+\begin{lstlisting}[language=c++]
+    class A{
+        ...
+        friend A operator*(const A& _c1, const A& _c2);
+    }
+    A operator*(const A& _c1, const A& _c2); 
+\end{lstlisting}
+\subsection{Ridefinizione operator++}
+
+\begin{lstlisting}[language=c++]
+    class A{
+        ...
+        A& A::operator++();     //prefisso
+        A A::operator++(int);   //postfisso
+    }
+\end{lstlisting}
+
+\subsection{Distinzione sul tipo di ritorno}
+Ci sono operatori che ritornano il risultato per valore e
+operatori che ritornano il risultato per referenza. Come nel caso degli incrementi o decrementi prefissi o postfissi la distinzione si ha quando il risultato è utilizzato successivamente nella stessa espressione. 
+\paragraph{}
+Gli operatori che modificano l’oggetto chiamante
+ritornando una reference. Esempio: operator+= e
+operator+ il primo ritornerà A\& mentre il secondo A.
+
+
+\subsection{Parola chiave friend}
+Quando dentro una classe compare questa parola chiave la
+riga NON e’ una dichiarazione di funzione o metodo ma piu’
+semplicemente permette l’accesso alle parti private da parte di
+una funzione o anche classe definita altrove. 

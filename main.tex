@@ -1,0 +1,89 @@
+\documentclass[11pt]{article}
+
+
+\usepackage[a4paper,top=1.5cm,bottom=2cm,left=1.5cm,right=1.5cm,marginparwidth=0cm]{geometry}
+\usepackage[T1]{fontenc} % codifica dei font
+\usepackage[utf8]{inputenc} % lettere accentate da tastiera
+\usepackage[italian]{babel} % lingua del documento
+\usepackage{url} 
+\usepackage{quoting}
+\usepackage{xspace}% per lo spazio intelligente
+\usepackage{titlesec} % per formato custom dei titoli dei capitoli
+\usepackage{tcolorbox}%per i box
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+%\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{mathrsfs}
+\usepackage{caption}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=false,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={ProgrammazioneAvanzata-c++},
+    pdfpagemode=FullScreen,
+    }
+\urlstyle{same}
+
+\usepackage{afterpage}
+
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{empty}%
+    \addtocounter{page}{-1}%
+    \newpage}
+    
+\usepackage{circuitikz}
+\usepackage{multirow}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+\begin{document}
+
+\input{pagina_Iniziale}
+\blankpage
+
+\input{UML}
+\input{Ridefinizione_op}
+\input{Ereditarieta}
+\input{prog_Generica}
+\input{STL}
+\input{Algorithm}
+\input{functions_pointers-exception-thread}
+\input{riferimenti}
+\input{smart_pointers}
+\input{bitSet_lambdaexp}
+
+
+
+
+\end{document}
