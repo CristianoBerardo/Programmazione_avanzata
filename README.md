@@ -1,2 +1,7 @@
 # Programmazione_avanzata
-Teoria del corso Programmazione avanzata di LT ICE dell' Università di Trento
+
+Corso del secondo anno di LT ICE dell' Università di Trento.
+
+Argomenti trattati:
+
+- Teoria di C++ v.11
